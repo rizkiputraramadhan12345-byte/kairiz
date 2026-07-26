@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css">
+  <title>Happy Birthday! 🎂</title>
+</head>
+<body>
+
+<!-- Floating hearts background -->
+<div class="hearts-bg" id="heartsBg"></div>
+<div class="confetti-container" id="confettiContainer"></div>
+
+<div class="card">
+
+  <h1 class="main-title">🎂 Happy Birthday! 🎂</h1>
+  <p class="subtitle">Happy Birthday, Sherin Nadya Putri Nabila ✨</p>
+
+  <!-- Photo Slideshow -->
+  <div class="photo-frame" style="animation-fill-mode: forwards;">
+    <div class="ring"></div>
+    <div class="slideshow-wrap" id="slideshowWrap">
+      <!-- Slides container -->
+      <div class="slides" id="slides"></div>
+      <!-- Prev / Next arrows -->
+      <button class="slide-arrow left"  id="arrowLeft"  onclick="slidePhoto(-1)">‹</button>
+      <button class="slide-arrow right" id="arrowRight" onclick="slidePhoto(1)">›</button>
+      <!-- Dot indicators -->
+      <div class="slide-dots" id="slideDots"></div>
+    </div>
+  </div>
+
+  <!-- Birthday Cake -->
+  <div class="cake-section">
+    <div class="cake-container" id="cakeContainer">
+      <!-- Candles -->
+      <div class="candles">
+        <div class="candle" id="c1"><div class="flame" id="f1"></div></div>
+        <div class="candle" id="c2"><div class="flame" id="f2"></div></div>
+        <div class="candle" id="c3"><div class="flame" id="f3"></div></div>
+      </div>
+      <!-- Cake layers -->
+      <div class="cake-top"></div>
+      <div class="cake-middle"></div>
+      <div class="cake-bottom"></div>
+      <!-- Plate -->
+      <div class="cake-plate"></div>
+    </div>
+    <p class="cake-hint" id="cakeHint">🎂 Click the cake to blow out the candles!</p>
+  </div>
+  <div class="music-player">
+    <button class="play-btn" id="playBtn" onclick="togglePlay()" title="Play / Pause">▶</button>
+    <button class="skip-btn" id="skipBackBtn" onclick="skipBack()" title="Skip Back 10s">⏮ -10s</button>
+    <div class="player-right">
+      <div class="song-info">
+        <div class="song-title">About You</div>
+        <div class="song-artist" id="songArtist">The 1975 🎵</div>
+      </div>
+      <div class="player-seek">
+        <span class="time-label" id="currentTime">0:00</span>
+        <div class="progress-wrap" id="seekBar">
+          <div class="progress-bar" id="progressBar"></div>
+          <div class="seek-thumb" id="seekThumb"></div>
+        </div>
+        <span class="time-label" id="totalTime">0:00</span>
+      </div>
+    </div>
+    <button class="skip-btn" id="skipForwardBtn" onclick="skipForward()" title="Skip Forward 10s">+10s ⏭</button>
+  </div>
+
+  <!-- Hidden Audio player -->
+  <audio id="audioPlayer" style="display:none;">
+    <source src="The 1975 - About You Lyrics.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Envelope -->
+  <div class="envelope-section" style="animation-fill-mode: forwards;">
+    <div class="envelope" id="envelope" onclick="openEnvelope()">
+      <div class="env-body">
+        <div class="env-clip" id="envClip">
+          <div class="letter-card" id="letterCard">
+            <h2>To My Beautiful Sherin 💕</h2>
+            <p>
+              Byhun, Selamat Ulang Tahun yahh yang ke 19 tahun, aku berdoa kamu sehat terus, menjadi cewek yang lebih kuat tidak ovt terus aku berharap kamu manjadi Perempuan taat agama dan juga ingat orangtua,
+               semua orang sayang kamu tentunya aku juga jadi jangan memperdulikan orang lain berbicara yang gak jelas kepada mu di sisi kamu by ku semoga kita bisa Bersama terus aku gak tau ending apa tapi aku ingin menikmati masa sekarang dan semoga kamu happy terus Bersamaku,
+                masalah apapun kita hadapi bersama yahhh. Sherin Kamu Perempuan Kuat Dan Sabar.
+            </p>
+            <p style="margin-top:10px;">
+              Thank you for being my support system—even from afar, and even though I once wanted to forget you.
+               I am so sorry; I’ve realized that women who act as a support system truly do exist, and I only understood this because of you.
+                Thank you. I love you, Byhun. 💖
+            </p>
+            <div class="signature">Forever yours, Kai 🌹</div>
+          </div>
+        </div>
+      </div>
+      <div class="env-flap">
+        <div class="env-flap-shape"></div>
+        <div class="env-flap-inner"></div>
+      </div>
+      <div class="env-seal">💌</div>
+    </div>
+    <p class="open-hint">👆 Click the envelope to open your letter</p>
+  </div>
+
+</div>
+
+<!-- Audio (Web Audio API synthesized "Happy Birthday") -->
+<script>
+  /* ── Floating hearts ── */
+  const heartsBg = document.getElementById('heartsBg');
+  const EMOJIS = ['🩷','💕','💗','💓','🌸','✨','🎀','🌷'];
+  for (let i = 0; i < 18; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-particle';
+    h.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDuration = (6 + Math.random() * 10) + 's';
+    h.style.animationDelay = (Math.random() * 10) + 's';
+    h.style.fontSize = (0.9 + Math.random() * 1.4) + 'rem';
+    heartsBg.appendChild(h);
+  }
+
+  /* ── Photo Slideshow ── */
+  let photos = [
+    'images/WhatsApp Image 2026-07-26 at 13.06.05.jpeg',
+    'images/WhatsApp Image 2026-07-26 at 13.06.05 (1).jpeg',
+    'images/WhatsApp Image 2026-07-26 at 13.06.05 (2).jpeg',
+    'images/WhatsApp Image 2026-07-20 at 19.05.26.jpeg',
+  ];
+  let currentSlide = 0;
+
+  function renderSlides() {
+    const slidesEl = document.getElementById('slides');
+    const dotsEl = document.getElementById('slideDots');
+    document.getElementById('arrowLeft').style.display  = photos.length > 1 ? 'flex' : 'none';
+    document.getElementById('arrowRight').style.display = photos.length > 1 ? 'flex' : 'none';
+
+    slidesEl.innerHTML = '';
+    dotsEl.innerHTML = '';
+
+    photos.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.className = 'slide-img' + (i === currentSlide ? ' active' : '');
+      img.alt = 'Photo ' + (i + 1);
+      slidesEl.appendChild(img);
+
+      const dot = document.createElement('span');
+      dot.className = 'slide-dot' + (i === currentSlide ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+      dotsEl.appendChild(dot);
+    });
+  }
+
+  // Initialize slides on page load
+  renderSlides();
+
+  function goToSlide(index) {
+    currentSlide = (index + photos.length) % photos.length;
+    document.querySelectorAll('.slide-img').forEach((img, i) => {
+      img.className = 'slide-img' + (i === currentSlide ? ' active' : '');
+    });
+    document.querySelectorAll('.slide-dot').forEach((dot, i) => {
+      dot.className = 'slide-dot' + (i === currentSlide ? ' active' : '');
+    });
+  }
+
+  function slidePhoto(dir) {
+    goToSlide(currentSlide + dir);
+  }
+
+  // Touch swipe support
+  let touchStartX = 0;
+  document.getElementById('slideshowWrap').addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  document.getElementById('slideshowWrap').addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) slidePhoto(diff > 0 ? 1 : -1);
+  }, { passive: true });
+
+  /* ── Envelope ── */
+  let letterRevealed = false;
+  function openEnvelope() {
+    const envelope = document.getElementById('envelope');
+    const letter = document.getElementById('letterCard');
+    const hint = document.querySelector('.open-hint');
+
+    if (!letterRevealed) {
+      // First time — open with confetti
+      letterRevealed = true;
+      envelope.classList.add('open');
+      setTimeout(() => {
+        letter.classList.add('revealed');
+        hint.classList.add('hidden');
+      }, 300);
+      launchConfetti();
+      return;
+    }
+
+    // Toggle open/close freely after first reveal
+    if (envelope.classList.contains('open')) {
+      // Close — flap down, letter slides back down
+      envelope.classList.remove('open');
+      letter.classList.remove('revealed');
+    } else {
+      // Open — flap up, letter slides back up
+      envelope.classList.add('open');
+      setTimeout(() => {
+        letter.classList.add('revealed');
+      }, 300);
+    }
+  }
+
+  /* ── Confetti ── */
+  function launchConfetti() {
+    const container = document.getElementById('confettiContainer');
+    const colors = ['#e91e8c','#f48fb1','#c2185b','#ff80ab','#fce4ec','#ad1457','#ffb3d1'];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement('div');
+      c.className = 'conf';
+      c.style.left = (20 + Math.random() * 60) + 'vw';
+      c.style.top = '0';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.width = (6 + Math.random() * 10) + 'px';
+      c.style.height = (6 + Math.random() * 10) + 'px';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      c.style.animationDuration = (1.5 + Math.random() * 2.5) + 's';
+      c.style.animationDelay = (Math.random() * 0.8) + 's';
+      container.appendChild(c);
+      setTimeout(() => c.remove(), 4000);
+    }
+  }
+
+  /* ── Cake ── */
+  let candlesBlown = 0;
+  const totalCandles = 3;
+
+  document.getElementById('cakeContainer').addEventListener('click', blowCandle);
+
+  function blowCandle() {
+    if (candlesBlown >= totalCandles) return;
+    const flameId = 'f' + (candlesBlown + 1);
+    const flame = document.getElementById(flameId);
+    flame.classList.add('out');
+    candlesBlown++;
+    if (candlesBlown === totalCandles) {
+      document.getElementById('cakeHint').textContent = '🎉 Make a wish Byhun! 💕';
+      launchConfetti();
+    }
+  }
+
+  /* ── HTML5 Audio player for local MP3 ── */
+  const playBtn = document.getElementById('playBtn');
+  const progressBar = document.getElementById('progressBar');
+  const seekThumb = document.getElementById('seekThumb');
+  const currentTimeEl = document.getElementById('currentTime');
+  const totalTimeEl = document.getElementById('totalTime');
+  const seekBar = document.getElementById('seekBar');
+  const audioPlayer = document.getElementById('audioPlayer');
+  let progressInterval = null;
+
+  // Initialize audio duration when metadata loads
+  audioPlayer.addEventListener('loadedmetadata', () => {
+    const duration = audioPlayer.duration;
+    if (duration) totalTimeEl.textContent = formatTime(duration);
+  });
+
+  // Update progress as audio plays
+  audioPlayer.addEventListener('timeupdate', () => {
+    if (!audioPlayer.duration) return;
+    const duration = audioPlayer.duration;
+    const current = audioPlayer.currentTime;
+    if (duration > 0) {
+      const pct = (current / duration) * 100;
+      progressBar.style.width = pct + '%';
+      seekThumb.style.left = pct + '%';
+      currentTimeEl.textContent = formatTime(current);
+    }
+  });
+
+  // Handle audio ended
+  audioPlayer.addEventListener('ended', () => {
+    playBtn.textContent = '▶';
+    progressBar.style.width = '0%';
+    seekThumb.style.left = '0%';
+    currentTimeEl.textContent = '0:00';
+  });
+
+  // Handle play/pause
+  audioPlayer.addEventListener('play', () => {
+    playBtn.textContent = '⏸';
+  });
+
+  audioPlayer.addEventListener('pause', () => {
+    playBtn.textContent = '▶';
+  });
+
+  function formatTime(sec) {
+    const s = Math.floor(sec);
+    const m = Math.floor(s / 60);
+    const ss = String(s % 60).padStart(2, '0');
+    return m + ':' + ss;
+  }
+
+  function togglePlay() {
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
+  }
+
+  function seekTo(e) {
+    const rect = seekBar.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const pct = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
+    const duration = audioPlayer.duration;
+    if (duration) {
+      audioPlayer.currentTime = pct * duration;
+      progressBar.style.width = (pct * 100) + '%';
+      seekThumb.style.left = (pct * 100) + '%';
+      currentTimeEl.textContent = formatTime(pct * duration);
+    }
+  }
+
+  let isSeeking = false;
+  seekBar.addEventListener('mousedown',  (e) => { isSeeking = true; seekTo(e); });
+  seekBar.addEventListener('touchstart', (e) => { isSeeking = true; seekTo(e); }, { passive: true });
+  document.addEventListener('mousemove', (e) => { if (isSeeking) seekTo(e); });
+  document.addEventListener('touchmove', (e) => { if (isSeeking) seekTo(e); }, { passive: true });
+  document.addEventListener('mouseup',   () => { isSeeking = false; });
+  document.addEventListener('touchend',  () => { isSeeking = false; });
+</script>
+</body>
+</html>
